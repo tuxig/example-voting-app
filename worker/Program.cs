@@ -16,8 +16,14 @@ namespace Worker
         {
             try
             {
-                var pgsql = OpenDbConnection("Server=db;Username=postgres;Password=postgres;");
-                var redisConn = OpenRedisConnection("redis");
+                var redisHost = Environment.GetEnvironmentVariable("REDIS_HOST");
+                redisHost =  !string.IsNullOrEmpty(redisHost) ? redisHost : "redis";
+
+                var pgHost = Environment.GetEnvironmentVariable("POSTGRES_HOST");
+                pgHost = !string.IsNullOrEmpty(pgHost) ? pgHost : "db";
+
+                var pgsql = OpenDbConnection($"Server={pgHost};Username=postgres;Password=postgres;");
+                var redisConn = OpenRedisConnection(redisHost);
                 var redis = redisConn.GetDatabase();
 
                 // Keep alive is not implemented in Npgsql yet. This workaround was recommended:

@@ -8,6 +8,8 @@ var express = require('express'),
 
 var port = process.env.PORT || 4000;
 
+var pgHost = process.env.POSTGRES_HOST || "db";
+
 io.on('connection', function (socket) {
 
   socket.emit('message', { text : 'Welcome!' });
@@ -18,7 +20,7 @@ io.on('connection', function (socket) {
 });
 
 var pool = new Pool({
-  connectionString: 'postgres://postgres:postgres@db/postgres'
+  connectionString: `postgres://postgres:postgres@${pgHost}/postgres`
 });
 
 async.retry(
