@@ -15,8 +15,12 @@ spec:
         app: result
     spec:
       containers:
-      - image: dockersamples/examplevotingapp_result
+      - image: ghcr.io/tuxig/example-voting-app/worker:basepath-result
         name: result
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
           name: result
+        env:
+        - name: BASE_PATH
+          value: "/result"

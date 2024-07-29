@@ -1,13 +1,17 @@
 var express = require('express'),
     async = require('async'),
+    path = require('path'),
     { Pool } = require('pg'),
     cookieParser = require('cookie-parser'),
     app = express(),
+    router = express.Router(),
     server = require('http').Server(app),
-    io = require('socket.io')(server);
+    io = require('socket.io')(server, {
+      path: '/result/socket.io'
+  });
 
 var port = process.env.PORT || 4000;
-
+var basePath = process.env.BASE_PATH || '';
 var pgHost = process.env.POSTGRES_HOST || "db";
 
 io.on('connection', function (socket) {
@@ -65,12 +69,15 @@ function collectVotesFromResult(result) {
   return votes;
 }
 
+// Serve static files relative to basePath
+router.use(express.static(path.join(__dirname, 'views')));
+
 app.use(cookieParser());
 app.use(express.urlencoded());
-app.use(express.static(__dirname + '/views'));
-
-app.get('/', function (req, res) {
-  res.sendFile(path.resolve(__dirname + '/views/index.html'));
+app.use(basePath, router);
+// Router handles the root route under basePath
+router.get('/', function (req, res) {
+  res.sendFile(path.resolve(__dirname, 'views', 'index.html'));
 });
 
 server.listen(port, function () {
