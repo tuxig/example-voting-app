@@ -36,7 +36,6 @@ def hello():
         app.logger.info('Received vote for %s', vote)
         data = json.dumps({'voter_id': voter_id, 'vote': vote})
         redis.rpush('votes', data)
-        return redirect(base_path + "/")
     resp = make_response(render_template(
         'index.html',
         option_a=option_a,
