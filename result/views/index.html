@@ -36,9 +36,6 @@
       <span ng-if="total == 1">{{total}} vote</span>
       <span ng-if="total >= 2">{{total}} votes</span>
     </div>
-    <script>
-      var basePath = '{{basePath}}';  // Set for the client side
-    </script>
     <script src="{{basePath}}/socket.io/socket.io.js"></script>
     <script src="{{basePath}}/angular.min.js"></script>
     <script src="{{basePath}}/app.js"></script>

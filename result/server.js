@@ -6,6 +6,7 @@ var express = require('express'),
     app = express(),
     router = express.Router(),
     server = require('http').Server(app),
+    stringReplace = require('string-replace-middleware'),
     io = require('socket.io')(server, {
       path: '/result/socket.io'
   });
@@ -13,8 +14,6 @@ var express = require('express'),
 var port = process.env.PORT || 4000;
 var basePath = process.env.BASE_PATH || '';
 var pgHost = process.env.POSTGRES_HOST || "db";
-
-const fs = require('fs');
 
 io.on('connection', function (socket) {
 
@@ -71,19 +70,28 @@ function collectVotesFromResult(result) {
   return votes;
 }
 
-// Serve static files relative to basePath
-router.use(express.static(path.join(__dirname, 'views')));
+const stringReplaceOptions = {
+  contentTypeFilterRegexp: /^text\/|^application\/json$|^application\/xml$|^application\/javascript/
+}
+app.use(stringReplace({
+  '{{basePath}}': basePath,
+},stringReplaceOptions));
+
 
 app.use(cookieParser());
 app.use(express.urlencoded());
-app.use(basePath, router);
-// Router handles the root route under basePath
-router.get('/', function (req, res) {
-    fs.readFile(path.resolve(__dirname, 'views', 'index.html'), (err, data) => {
-      console.log(outData)
-      var outData = data.toString().replace("{base_path}", basePath);
-      res.send(outData);
-  });
+// app.use(basePath, function (req, res) {
+//     fs.readFile(path.resolve(__dirname, 'views', 'index.html'), (err, data) => {
+//       console.log(outData)
+//       var outData = data.toString().replace("{{basePath}}", basePath);
+//       res.send(outData);d
+//   });
+// });
+
+app.use(basePath, express.static(__dirname + '/views'));
+
+app.get('/', function (req, res) {
+  res.sendFile(path.resolve(__dirname + '/views/index.html'));
 });
 
 server.listen(port, function () {
