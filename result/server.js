@@ -14,6 +14,8 @@ var port = process.env.PORT || 4000;
 var basePath = process.env.BASE_PATH || '';
 var pgHost = process.env.POSTGRES_HOST || "db";
 
+const fs = require('fs');
+
 io.on('connection', function (socket) {
 
   socket.emit('message', { text : 'Welcome!' });
@@ -77,7 +79,11 @@ app.use(express.urlencoded());
 app.use(basePath, router);
 // Router handles the root route under basePath
 router.get('/', function (req, res) {
-  res.sendFile(path.resolve(__dirname, 'views', 'index.html'));
+    fs.readFile(path.resolve(__dirname, 'views', 'index.html'), (err, data) => {
+      console.log(outData)
+      var outData = data.toString().replace("{base_path}", basePath);
+      res.send(outData);
+  });
 });
 
 server.listen(port, function () {

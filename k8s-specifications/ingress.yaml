@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: host.example.com
+  - host: velpoc-rke2-cluster-vel.atix-training.de
     http:
       paths:
       - path: /voting
@@ -25,7 +25,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: host.example.com
+  - host: velpoc-rke2-cluster-vel.atix-training.de
     http:
       paths:
       - path: /result
