@@ -80,13 +80,6 @@ app.use(stringReplace({
 
 app.use(cookieParser());
 app.use(express.urlencoded());
-// app.use(basePath, function (req, res) {
-//     fs.readFile(path.resolve(__dirname, 'views', 'index.html'), (err, data) => {
-//       console.log(outData)
-//       var outData = data.toString().replace("{{basePath}}", basePath);
-//       res.send(outData);d
-//   });
-// });
 
 app.use(basePath, express.static(__dirname + '/views'));
 
