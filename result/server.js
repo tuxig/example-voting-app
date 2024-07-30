@@ -14,6 +14,8 @@ var express = require('express'),
 var port = process.env.PORT || 4000;
 var basePath = process.env.BASE_PATH || '';
 var pgHost = process.env.POSTGRES_HOST || "db";
+var optionA = process.env.OPTION_A || "Cats";
+var optionB = process.env.OPTION_B || "Dogs";
 
 io.on('connection', function (socket) {
 
@@ -74,7 +76,7 @@ const stringReplaceOptions = {
   contentTypeFilterRegexp: /^text\/|^application\/json$|^application\/xml$|^application\/javascript/
 }
 app.use(stringReplace({
-  '{{basePath}}': basePath,
+  '{{basePath}}': basePath, '{{optionA}}': optionA, '{{optionB}}': optionB
 },stringReplaceOptions));
 
 
