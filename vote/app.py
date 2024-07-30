@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response, g
+from flask import Flask, render_template, request, make_response, g, redirect
 from redis import Redis
 import os
 import socket
@@ -10,8 +10,8 @@ option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
 redis_host = os.getenv('REDIS_HOST', "redis")
 hostname = socket.gethostname()
-
-app = Flask(__name__)
+base_path = os.getenv('BASE_PATH', '')
+app = Flask(__name__, static_url_path=base_path + '/static')
 
 gunicorn_error_logger = logging.getLogger('gunicorn.error')
 app.logger.handlers.extend(gunicorn_error_logger.handlers)
@@ -22,7 +22,7 @@ def get_redis():
         g.redis = Redis(host=redis_host, db=0, socket_timeout=5)
     return g.redis
 
-@app.route("/", methods=['POST','GET'])
+@app.route(f"{base_path}/", methods=['POST','GET'])
 def hello():
     voter_id = request.cookies.get('voter_id')
     if not voter_id:
@@ -36,7 +36,6 @@ def hello():
         app.logger.info('Received vote for %s', vote)
         data = json.dumps({'voter_id': voter_id, 'vote': vote})
         redis.rpush('votes', data)
-
     resp = make_response(render_template(
         'index.html',
         option_a=option_a,
@@ -46,7 +45,6 @@ def hello():
     ))
     resp.set_cookie('voter_id', voter_id)
     return resp
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
